@@ -1,0 +1,24 @@
+# 垂直分库
+spring:
+  shardingsphere:
+    datasource: # 数据源
+      names: db1,db2
+      db1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.10.90:3306/msb_payorder_db?characterEncoding=UTF-8&useSSL=false
+        username: root
+        password: 123456
+      db2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.10.90:3306/msb_user_db?characterEncoding=UTF-8&useSSL=false
+        username: root
+        password: 123456
+    rules: # 规则
+      sharding:
+        tables:
+          pay_order:
+            actual-data-nodes: db1.pay_order # 数据节点
+          users:
+            actual-data-nodes: db2.users #数据节点

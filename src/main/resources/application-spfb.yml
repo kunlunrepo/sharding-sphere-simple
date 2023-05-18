@@ -1,0 +1,41 @@
+# 水平分表
+spring:
+  shardingsphere:
+    props:
+      sql-show: true # 打印SQL
+    datasource: # 数据源
+      names: db1
+      db1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.10.90:3306/msb_course_db?characterEncoding=UTF-8&useSSL=false
+        username: root
+        password: 123456
+    rules: # 规则
+      sharding:
+        tables:
+          t_course:
+#            actual-data-nodes: db1.t_course_1 # 数据节点
+#            actual-data-nodes: db1.t_course_2 # 数据节点
+            actual-data-nodes: db1.t_course_$->{1..2} # 范围区间
+            table-strategy:
+              standard:
+                sharding-column: cid # 分片键名称
+                sharding-algorithm-name: table-inline # 分片算法名称
+            key-generate-strategy:
+              column: cid # 分布式序列-列名称
+              key-generator-name: alg_snowflake # 算法名称
+        sharding-algorithms:
+          table-inline:
+            type: INLINE # 分片算法类型：行表达式分片算法
+            props:
+              algorithm-expression: t_course_$->{cid % 2 + 1} # 分片算法表达式
+        key-generators:
+          alg_snowflake:
+            type: SNOWFLAKE # 主键策略
+
+
+
+
+
+
